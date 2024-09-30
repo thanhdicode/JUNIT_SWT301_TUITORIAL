@@ -1,7 +1,13 @@
 <configuration>
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n</pattern>
+            <!-- Color-coded log pattern -->
+            <pattern>
+                %d{yyyy-MM-dd HH:mm:ss} [%thread] %highlight(%-5level) %cyan(%logger{36}) - %msg%n
+            </pattern>
+            <!-- Enable color codes for ANSI terminals -->
+            <immediateFlush>true</immediateFlush>
+            <charset>UTF-8</charset>
         </encoder>
     </appender>
 

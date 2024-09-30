@@ -9,15 +9,22 @@ import org.slf4j.LoggerFactory;
  * This class tests the functionality of the Calculator class using
  * parameterized tests. It reads input values and operation types from a CSV file,
  * performs the specified operation using the Calculator, and compares the result
- * with expected values, logging all the steps.
+ * with expected values, logging all the steps with color-coded logs.
  */
 public class CalculatorTestPro {
 
-    // Logger for logging the steps
-    private static final Logger logger = LoggerFactory.getLogger(CalculatorTest.class);
+    // Logger for logging the steps with color
+    private static final Logger logger = LoggerFactory.getLogger(CalculatorTestPro.class);
 
     // Instance of the Calculator class that will be tested
-    private Calculator calculator = new Calculator();
+    private final Calculator calculator = new Calculator();
+
+    // ANSI color codes for colored logging output
+    private static final String RESET = "\033[0m";
+    private static final String GREEN = "\033[0;32m";  // For PASS/INFO
+    private static final String RED = "\033[0;31m";    // For ERROR/FAIL
+    private static final String YELLOW = "\033[0;33m"; // For WARN
+    private static final String BLUE = "\033[0;34m";   // For DEBUG
 
     /**
      * Tests the functionality of the Calculator class for multiple operations.
@@ -32,41 +39,50 @@ public class CalculatorTestPro {
     @ParameterizedTest
     @CsvFileSource(resources = "/calculator_data.csv", numLinesToSkip = 1)
     public void testCalculatorFromFile(String operation, int a, int b, int result) {
-        logger.info("Starting test: operation={}, a={}, b={}, expected result={}", operation, a, b, result);
+        logger.info(GREEN + "Starting test: operation={}, a={}, b={}, expected result={}" + RESET, operation, a, b, result);
 
-        if ("divide".equals(operation) && b == 0) {
-            logger.warn("Testing division by zero, expecting ArithmeticException");
-            assertThrows(ArithmeticException.class, () -> calculator.divide(a, b));
-            logger.info("Division by zero threw ArithmeticException as expected");
-        } else {
+        try {
             int actualResult = 0;
 
-            // Determine which operation to perform based on the operation parameter
             switch (operation) {
                 case "add":
-                    logger.debug("Performing addition: {} + {}", a, b);
+                    logger.debug(BLUE + "Performing addition: {} + {}" + RESET, a, b);
                     actualResult = calculator.add(a, b);
                     break;
                 case "subtract":
-                    logger.debug("Performing subtraction: {} - {}", a, b);
+                    logger.debug(BLUE + "Performing subtraction: {} - {}" + RESET, a, b);
                     actualResult = calculator.subtract(a, b);
                     break;
                 case "multiply":
-                    logger.debug("Performing multiplication: {} * {}", a, b);
+                    logger.debug(BLUE + "Performing multiplication: {} * {}" + RESET, a, b);
                     actualResult = calculator.multiply(a, b);
                     break;
                 case "divide":
-                    logger.debug("Performing division: {} / {}", a, b);
-                    actualResult = calculator.divide(a, b);
+                    if (b == 0) {
+                        logger.warn(YELLOW + "Division by zero detected, expecting ArithmeticException" + RESET);
+                        assertThrows(ArithmeticException.class, () -> calculator.divide(a, b));
+                        logger.info(GREEN + "Division by zero threw ArithmeticException as expected" + RESET);
+                        return;
+                    } else {
+                        logger.debug(BLUE + "Performing division: {} / {}" + RESET, a, b);
+                        actualResult = calculator.divide(a, b);
+                    }
                     break;
                 default:
-                    logger.error("Unknown operation: {}", operation);
+                    logger.error(RED + "Unknown operation: {}" + RESET, operation);
                     fail("Unknown operation: " + operation);
             }
 
-            logger.info("Actual result: {}, Expected result: {}", actualResult, result);
+            logger.info(GREEN + "Actual result: {}, Expected result: {}" + RESET, actualResult, result);
             assertEquals(result, actualResult);
-            logger.info("Test passed successfully.");
+            logger.info(GREEN + "Test passed successfully." + RESET);
+
+        } catch (ArithmeticException ae) {
+            logger.error(RED + "Caught ArithmeticException: {}" + RESET, ae.getMessage());
+            fail("Test failed due to ArithmeticException: " + ae.getMessage());
+        } catch (Exception e) {
+            logger.error(RED + "Unexpected exception caught: {}" + RESET, e.getMessage());
+            fail("Test failed due to an unexpected exception: " + e.getMessage());
         }
     }
 }

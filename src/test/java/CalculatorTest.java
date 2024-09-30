@@ -1,47 +1,74 @@
-import static org.junit.jupiter.api.Assertions.*;
 import org.example.Math.Calculator;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvFileSource;
+import org.junit.jupiter.api.*;
+import static org.junit.jupiter.api.Assertions.*;
+import java.util.logging.*;
 
-/**
- * This class tests the functionality of the Calculator class using
- * parameterized tests. It reads input values from CSV files, performs
- * operations using the Calculator, and compares the result with expected values.
- */
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class CalculatorTest {
 
-    // Instance of the Calculator class that will be tested
-    private Calculator calculator = new Calculator();
+    private static final Logger logger = Logger.getLogger(CalculatorTest.class.getName());
+    private Calculator calculator;
 
-    /**
-     * Tests the addition functionality of the Calculator class.
-     * It reads values from a CSV file and asserts that the addition result
-     * matches the expected result from the file.
-     *
-     * @param a      the first operand (read from the CSV file)
-     * @param b      the second operand (read from the CSV file)
-     * @param result the expected result of adding a and b (read from the CSV file)
-     */
-    @ParameterizedTest
-    @CsvFileSource(resources = "/addition_data.csv", numLinesToSkip = 1)
-    public void testAdditionFromFile(int a, int b, int result) {
-        // Assert that the sum of a and b matches the expected result from the CSV file
-        assertEquals(result, calculator.add(a, b));
+    // Spring Boot 3-like colors
+    private static final String CYAN_BOLD = "\033[1;36m";  // Bold Cyan
+    private static final String YELLOW_BOLD = "\033[1;33m";  // Bold Yellow
+    private static final String GREEN_BOLD = "\033[1;32m";  // Bold Green
+    private static final String RED_BOLD = "\033[1;31m";    // Bold Red
+    private static final String RESET = "\033[0m";          // Reset Color
+
+    @BeforeAll
+    public static void beforeAllTests() {
+        logger.info(CYAN_BOLD + "=== Starting Calculator Tests ===" + RESET);
     }
 
-    /**
-     * Tests the multiplication functionality of the Calculator class.
-     * It reads values from a CSV file and asserts that the multiplication result
-     * matches the expected result from the file.
-     *
-     * @param a      the first operand (read from the CSV file)
-     * @param b      the second operand (read from the CSV file)
-     * @param result the expected result of multiplying a and b (read from the CSV file)
-     */
-    @ParameterizedTest
-    @CsvFileSource(resources = "/multiplication_data.csv", numLinesToSkip = 1)
-    public void testMultiplyFromFile(int a, int b, int result) {
-        // Assert that the product of a and b matches the expected result from the CSV file
-        assertEquals(result, calculator.multiply(a, b));
+    @BeforeEach
+    public void setUp() {
+        calculator = new Calculator();
+        logger.info(YELLOW_BOLD + ">>> Setting up test environment..." + RESET);
+    }
+
+    @Test
+    @Order(1)
+    public void testAddition() {
+        logger.info(GREEN_BOLD + "Running test for Addition..." + RESET);
+        assertEquals(5, calculator.add(2, 3));
+    }
+
+    @Test
+    @Order(2)
+    public void testSubtraction() {
+        logger.info(GREEN_BOLD + "Running test for Subtraction..." + RESET);
+        assertEquals(1, calculator.subtract(3, 2));
+    }
+
+    @Test
+    @Order(3)
+    public void testMultiplication() {
+        logger.info(GREEN_BOLD + "Running test for Multiplication..." + RESET);
+        assertEquals(6, calculator.multiply(2, 3));
+    }
+
+    @Test
+    @Order(4)
+    public void testDivision() {
+        logger.info(GREEN_BOLD + "Running test for Division..." + RESET);
+        assertEquals(2, calculator.divide(6, 3));
+    }
+
+    @Test
+    @Order(5)
+    public void testDivisionByZero() {
+        logger.warning(RED_BOLD + "Running test for Division by Zero..." + RESET);
+        assertThrows(ArithmeticException.class, () -> calculator.divide(6, 0));
+    }
+
+    @AfterEach
+    public void tearDown() {
+        logger.info(YELLOW_BOLD + ">>> Test complete, tearing down..." + RESET);
+    }
+
+    @AfterAll
+    public static void afterAllTests() {
+        logger.info(CYAN_BOLD + "=== All Calculator Tests Completed ===" + RESET);
     }
 }

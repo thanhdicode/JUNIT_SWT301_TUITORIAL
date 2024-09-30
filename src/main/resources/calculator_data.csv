@@ -1,4 +1,6 @@
-a,b,result
-2,3,5
-10,5,15
-15,3,18
+operation,a,b,result
+add,2,3,5
+multiply,2,3,6
+subtract,10,5,5
+divide,10,5,2
+divide,10,0,0

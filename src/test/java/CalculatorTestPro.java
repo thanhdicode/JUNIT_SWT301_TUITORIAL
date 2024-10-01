@@ -5,37 +5,20 @@ import org.junit.jupiter.params.provider.CsvFileSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * This class tests the functionality of the Calculator class using
- * parameterized tests. It reads input values and operation types from a CSV file,
- * performs the specified operation using the Calculator, and compares the result
- * with expected values, logging all the steps with color-coded logs.
- */
+
 public class CalculatorTestPro {
 
-    // Logger for logging the steps with color
     private static final Logger logger = LoggerFactory.getLogger(CalculatorTestPro.class);
-
-    // Instance of the Calculator class that will be tested
     private final Calculator calculator = new Calculator();
 
-    // ANSI color codes for colored logging output
+    
     private static final String RESET = "\033[0m";
     private static final String GREEN = "\033[0;32m";  // For PASS/INFO
     private static final String RED = "\033[0;31m";    // For ERROR/FAIL
     private static final String YELLOW = "\033[0;33m"; // For WARN
     private static final String BLUE = "\033[0;34m";   // For DEBUG
 
-    /**
-     * Tests the functionality of the Calculator class for multiple operations.
-     * It reads values and operation type from a CSV file, performs the specified
-     * operation, and asserts that the result matches the expected result.
-     *
-     * @param operation the type of operation to be performed (add, subtract, multiply, divide)
-     * @param a         the first operand (read from the CSV file)
-     * @param b         the second operand (read from the CSV file)
-     * @param result    the expected result of the operation (read from the CSV file)
-     */
+    
     @ParameterizedTest
     @CsvFileSource(resources = "/calculator_data.csv", numLinesToSkip = 1)
     public void testCalculatorFromFile(String operation, int a, int b, int result) {
